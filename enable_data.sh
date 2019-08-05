@@ -12,10 +12,25 @@
 #    Software version: 22.329.63.01.965
 #
 
+# Check for dependencies
 if ! which curl &>/dev/null; then
     echo 'I need curl to work. Exiting.'
     exit 1
 fi
+if ! which usb_modeswitch &>/dev/null; then
+    echo 'I need usb_modeswitch to work. Exiting.'
+    exit 1
+fi
+
+# Check for modem
+# Bus XXX Device YYY: ID 12d1:14dc Huawei Technologies Co., Ltd. E33372 LTE/UMTS/GSM HiLink Modem/Networkcard
+if ! lsusb | grep '12d1:14dc' &>/dev/null; then
+    echo 'Modem not found. Exiting.'
+    exit 1
+fi
+
+# Switch modem mode
+usb_modeswitch --default-vendor 12d1 --default-product 14dc --huawei-new-mode &>/dev/null
 
 # Obtain SessionID and __RequestVerificationToken
 SesTokInfo=$(curl "http://192.168.8.1/api/webserver/SesTokInfo" --silent)
@@ -51,9 +66,14 @@ curl "http://192.168.8.1/api/dialup/mobile-dataswitch" \
      -H 'X-Requested-With: XMLHttpRequest' \
      -H 'Connection: keep-alive' \
      --compressed \
-     --insecure
+     --insecure \
+     --silent
 
 # Check status
+# <ConnectionStatus>900</ConnectionStatus> - connecting
+# <ConnectionStatus>901</ConnectionStatus> - connected
+# <ConnectionStatus>902</ConnectionStatus> - disconnected
+# <ConnectionStatus>903</ConnectionStatus> - disconnecting
 curl "http://192.168.8.1/api/monitoring/status" \
      -H "Cookie: SessionID=$SessionID" \
      -H 'DNT: 1' \
@@ -65,5 +85,6 @@ curl "http://192.168.8.1/api/monitoring/status" \
      -H 'X-Requested-With: XMLHttpRequest' \
      -H 'Connection: keep-alive' \
      --compressed \
-     --insecure
+     --insecure \
+     --silent
 
