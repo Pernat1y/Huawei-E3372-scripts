@@ -22,9 +22,11 @@ if ! which usb_modeswitch &>/dev/null; then
 fi
 
 # Check for modem
-if ! lsusb | grep -e '12d1:14dc' -e '12d1:1f01' &>/dev/null; then
+if lsusb | grep -e '12d1:14dc' -e '12d1:1f01' &>/dev/null; then
     # 12d1:14dc Huawei Technologies Co., Ltd. E33372 LTE/UMTS/GSM HiLink Modem/Networkcard
     # 12d1:1f01 Huawei Technologies Co., Ltd. E353/E3131 (Mass storage mode)
+    echo 'Modem found.'
+else
     echo 'Modem not found. Exiting.'
     exit 1
 fi
