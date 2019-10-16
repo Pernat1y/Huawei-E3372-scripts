@@ -34,6 +34,14 @@ fi
 # Switch modem mode
 usb_modeswitch --default-vendor 12d1 --default-product 14dc --huawei-new-mode &>/dev/null
 
+# Test web interface
+if curl "http://192.168.8.1" --silent; then
+    echo 'Connection to web interface successful'
+else
+    echo 'Unable to connect to web interface. Exiting.'
+    exit 1
+fi
+
 # Obtain SessionID and __RequestVerificationToken
 SesTokInfo=$(curl "http://192.168.8.1/api/webserver/SesTokInfo" --silent)
 SessionID=$(echo "$SesTokInfo" | grep "SessionID=" | cut -b 20-147)
