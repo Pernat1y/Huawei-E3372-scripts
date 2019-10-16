@@ -35,7 +35,7 @@ fi
 usb_modeswitch --default-vendor 12d1 --default-product 14dc --huawei-new-mode &>/dev/null
 
 # Test web interface
-if curl "http://192.168.8.1" --silent; then
+if curl "http://192.168.8.1" --silent &>/dev/null; then
     echo 'Connection to web interface successful'
 else
     echo 'Unable to connect to web interface. Exiting.'
