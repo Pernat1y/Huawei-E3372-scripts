@@ -18,13 +18,13 @@ if ! which curl &>/dev/null; then
     exit 1
 fi
 if ! which usb_modeswitch &>/dev/null; then
-    echo 'I need usb_modeswitch to work. Exiting.'
-    exit 1
+    echo 'You may need usb_modeswitch to work properly.'
 fi
 
 # Check for modem
-# Bus XXX Device YYY: ID 12d1:14dc Huawei Technologies Co., Ltd. E33372 LTE/UMTS/GSM HiLink Modem/Networkcard
-if ! lsusb | grep '12d1:14dc' &>/dev/null; then
+if ! lsusb | grep -e '12d1:14dc' -e '12d1:1f01' &>/dev/null; then
+    # 12d1:14dc Huawei Technologies Co., Ltd. E33372 LTE/UMTS/GSM HiLink Modem/Networkcard
+    # 12d1:1f01 Huawei Technologies Co., Ltd. E353/E3131 (Mass storage mode)
     echo 'Modem not found. Exiting.'
     exit 1
 fi
